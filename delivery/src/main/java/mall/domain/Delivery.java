@@ -1,6 +1,6 @@
 package mall.domain;
 
-import mall.domain.DeleveryStarted;
+import mall.domain.DeliveryStarted;
 import mall.domain.DeliveryCompleted;
 import mall.domain.DeliveryCanceled;
 import mall.domain.DeliveryReturned;
@@ -17,71 +17,39 @@ import java.util.Date;
 
 public class Delivery  {
 
-
-    
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
-    
-    
-    
-    
-    
     private Long id;
-    
-    
-    
-    
     
     private Long orderId;
     
-    
-    
-    
-    
     private Long productId;
     
-    
-    
-    
-    
-    private Long qty;
-    
-    
-    
-    
+    private Integer qty;
     
     private String productName;
-    
-    
-    
-    
     
     private String status;
 
     @PostPersist
     public void onPostPersist(){
 
-
-        DeleveryStarted deleveryStarted = new DeleveryStarted(this);
-        deleveryStarted.publishAfterCommit();
+        // DeleveryStarted deleveryStarted = new DeleveryStarted(this);
+        // deleveryStarted.publishAfterCommit();
 
     }
+
     @PostUpdate
     public void onPostUpdate(){
 
+        // DeliveryCompleted deliveryCompleted = new DeliveryCompleted(this);
+        // deliveryCompleted.publishAfterCommit();
 
-        DeliveryCompleted deliveryCompleted = new DeliveryCompleted(this);
-        deliveryCompleted.publishAfterCommit();
+        // DeliveryCanceled deliveryCanceled = new DeliveryCanceled(this);
+        // deliveryCanceled.publishAfterCommit();
 
-
-
-        DeliveryCanceled deliveryCanceled = new DeliveryCanceled(this);
-        deliveryCanceled.publishAfterCommit();
-
-
-
-        DeliveryReturned deliveryReturned = new DeliveryReturned(this);
-        deliveryReturned.publishAfterCommit();
+        // DeliveryReturned deliveryReturned = new DeliveryReturned(this);
+        // deliveryReturned.publishAfterCommit();
 
     }
     @PreUpdate
@@ -93,28 +61,31 @@ public class Delivery  {
         return deliveryRepository;
     }
 
-
-
-
     public static void deliveryStart(OrderPlaced orderPlaced){
 
-        /** Example 1:  new item 
+        /** Example 1:  new item */
         Delivery delivery = new Delivery();
+        delivery.setOrderId(orderPlaced.getId());
+        delivery.setProductId(orderPlaced.getProductId());
+        delivery.setProductName(orderPlaced.getProductName());
+        delivery.setQty(orderPlaced.getQty());
+        delivery.setStatus("DeliveryStarted");
+
         repository().save(delivery);
 
-        DeleveryStarted deleveryStarted = new DeleveryStarted(delivery);
-        deleveryStarted.publishAfterCommit();
-        */
-
-        /** Example 2:  finding and process
+        DeliveryStarted deliveryStarted = new DeliveryStarted(delivery);
+        deliveryStarted.publishAfterCommit();
         
-        repository().findById(orderPlaced.get???()).ifPresent(delivery->{
+
+        /** Example 2:  finding and process 
+        
+        repository().findById(orderPlaced.getId()).ifPresent(delivery->{
             
-            delivery // do something
+            delivery.setStatus("START"); // do something
             repository().save(delivery);
 
-            DeleveryStarted deleveryStarted = new DeleveryStarted(delivery);
-            deleveryStarted.publishAfterCommit();
+            DeliveryStarted deliveryStarted = new DeliveryStarted(delivery);
+            deliveryStarted.publishAfterCommit();
 
          });
         */
@@ -131,18 +102,18 @@ public class Delivery  {
         deliveryCanceled.publishAfterCommit();
         */
 
-        /** Example 2:  finding and process
+        /** Example 2:  finding and process */
         
-        repository().findById(orderCanceled.get???()).ifPresent(delivery->{
+        repository().findByOrderId(orderCanceled.getId()).ifPresent(delivery->{
             
-            delivery // do something
+            delivery.setStatus("DeliveryCanceled"); // do something
             repository().save(delivery);
 
             DeliveryCanceled deliveryCanceled = new DeliveryCanceled(delivery);
             deliveryCanceled.publishAfterCommit();
 
          });
-        */
+        
 
         
     }
