@@ -40,16 +40,15 @@ public class MypageViewHandler {
 
 
     @StreamListener(KafkaProcessor.INPUT)
-    public void whenDeleveryStarted_then_UPDATE_1(@Payload DeleveryStarted deleveryStarted) {
+    public void whenDeliveryStarted_then_UPDATE_1(@Payload DeliveryStarted deliveryStarted) {
         try {
-            if (!deleveryStarted.validate()) return;
+            if (!deliveryStarted.validate()) return;
                 // view 객체 조회
 
-                List<Mypage> mypageList = mypageRepository.findByOrderId(deleveryStarted.getOrderId());
+                List<Mypage> mypageList = mypageRepository.findByOrderId(deliveryStarted.getOrderId());
                 for(Mypage mypage : mypageList){
                     // view 객체에 이벤트의 eventDirectValue 를 set 함
-                    mypage.setStatus(deleveryStarted.getStatus());
-                    mypage.set();
+                    mypage.setStatus(deliveryStarted.getStatus());
                 // view 레파지 토리에 save
                 mypageRepository.save(mypage);
                 }

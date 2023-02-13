@@ -6,12 +6,12 @@ import java.util.*;
 
 
 @Data
-public class DeleveryStarted extends AbstractEvent {
+public class DeliveryStarted extends AbstractEvent {
 
     private Long id;
     private Long orderId;
     private Long productId;
-    private Long qty;
+    private Integer qty;
     private String productName;
     private String status;
 }
